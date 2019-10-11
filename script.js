@@ -1,53 +1,71 @@
-//Rule of thumb: if you only ever need ONE of something (gameBoard, displayController), use a module. If you need multiples of something (players!), create them with factories.
-
-/* to do
-	1) players click
-		a) show current players name
-		b) prompt to add players name
-		c) AI for computer
-*/
 
 // elements
-const startGameButton = document.querySelector('#start_game');
 const gameSpots = Array.from(document.querySelectorAll('.board-spot'));
 const playAgainButton = document.querySelector('#play_again');
+const currentPlayerDisplay = document.querySelector('#current_player');
+const onePlayerGameButton = document.querySelector('#one_player_game_button');
+const twoPlayerGameButton = document.querySelector('#two_player_game_button');
 
 
-// Module for gameboard display (will want to pass in 'symbol' & 'space');
+// Module for gameboard display;
 const game = (() =>  {
-	const gameBoard = ['','','','','','','',''];
-	const winnerMessageHTML = document.querySelector('#winner-message');
+	let gameBoard = ['','','','','','','','',''];
+	const displayBoard = document.querySelector('table');
+	const gameOverMessageHTML = document.querySelector('#winner-message');
+	const playerOneScoreDisplay = document.querySelector('#player_one_score');
+	const playerTwoScoreDisplay = document.querySelector('#player_two_score');
 
 	let gameTurn = 1;
+	let onePlayerGame = false;
+
+	let playerOneScore = 0;
+	let playerTwoScore = 0;
 	
 	let playerOne = {};
 	let playerTwo = {};
-	
-	function setPlayers (first, second) {
-		playerOne = first;
-		playerTwo = second;
-	}
 
-	function currentPlayer () {
-		if (gameTurn % 2 == 0) {
-			return playerTwo; 
-		} else {
-			return playerOne;
+	let gameOver = false;
+
+
+	// Computer player AI logic
+	function checkIfComputerTurn() {
+		if (playerOne.computer && currentPlayer() == playerOne) {
+			checkComputerChoice();
 		}
 	}
 
-	function checkPlaySpot (playerSpace) {
-		if (playerSpace.innerHTML.length > 0) {
-			return false;
+	function checkComputerChoice () {
+		const arraySpot = generateComputerNumber();
+
+		if (isBoardFull()) {
+			return
+		} else if (checkPlaySpot(arraySpot)) {
+			const gameBoardDisplay = document.querySelector(`td[data-spot="${arraySpot}"]`);
+
+			clickHandling(gameBoardDisplay, arraySpot);
+
 		} else {
-			return true;
+			checkComputerChoice();
 		}
 	}
 
-	function updateDisplay(playerWhoClicked){
-		this.innerHTML = playerWhoClicked.symbol;
+	function generateComputerNumber () {
+		let computerChoice = (Math.floor(Math.random()*9));
+		console.log(computerChoice);
+		return computerChoice;
 	}
 
+
+	// is game a tie
+	function isBoardFull(){
+		if (!gameBoard.includes('')) {
+			console.log(`!gameBoard.includes('')${!gameBoard.includes('')}`);
+			gameOver = true;
+			tieGameMessage();
+		}
+	}
+
+	// Winner logic
 	function checkWinner () {
 		let winner = false
 		// win by horizontal
@@ -76,73 +94,199 @@ const game = (() =>  {
 	}
 
 	function winnerMessage (playerWhoWon) {
-		winnerMessageHTML.innerHTML = `${playerWhoWon.name} has won!`;
+		gameOver = true;
+
+		gameOverMessageHTML.innerHTML = `${playerWhoWon.name} has won!`;
 
 		// show the play again button
-		playAgainButton.classList.toggle('hidden');
+		toggleHiddenClass(playAgainButton);
+
+		// hide current player turn
+		toggleHiddenClass(currentPlayerDisplay);
+
+		// update score and display
+		playerOne == playerWhoWon ? playerOneScore += 1 : playerTwoScore += 1;
+		showGameScore();
+		
+	}
+
+	function tieGameMessage () {
+		gameOver = true;
+
+		gameOverMessageHTML.innerHTML = `It's a Tie!`;
+
+		// show the play again button
+		toggleHiddenClass(playAgainButton);
+
+		// hide current player turn
+		toggleHiddenClass(currentPlayerDisplay);
+
+		showGameScore();
+	}
+
+
+	// game flow
+	function currentPlayer () {
+		if (gameTurn % 2 == 0) {
+			return playerTwo; 
+		} else {
+			return playerOne;
+		}
+	}
+
+	function checkPlaySpot (arraySpot) {
+		// passes in the position of the array (HTML attribute data-spot[0-9])
+
+		if (gameBoard[arraySpot] == '') {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	function playerClick (e) {
-		const playerSpace = this; // <td> html element clicked
+		if (gameOver == true) {
+			return
+		} else {
+			
+			const gameBoardDisplay = this;
+			const arraySpot = this.getAttribute(`data-spot`);
+			
+			if (checkPlaySpot(arraySpot)) {	
+				clickHandling(gameBoardDisplay, arraySpot);
+			}
+		}
+	}
+
+	function clickHandling (gameBoardDisplay, arraySpot) {
 		const playerWhoClicked = currentPlayer();
 
-		if (checkPlaySpot(playerSpace)) {
-			// push symbol to array
-			gameBoard[playerSpace.getAttribute('data-spot')-1] = playerWhoClicked.symbol;
+		// push player symbol to array
+		gameBoard[arraySpot] = playerWhoClicked.symbol;
+		
+		// update the game display
+		updateDisplay(playerWhoClicked);
+		gameBoardDisplay.innerHTML = playerWhoClicked.symbol;
+
+		isGameOver(playerWhoClicked);
+	}
+
+	function isGameOver(playerWhoClicked) {
+		if (checkWinner()) {
 			
-			// update the display
-			updateDisplay(playerWhoClicked);
-			this.innerHTML = playerWhoClicked.symbol;
+			winnerMessage(playerWhoClicked);
+		
+		} else if (isBoardFull()) {
 			
-			// check winner
-			checkWinner() ? winnerMessage(playerWhoClicked) : null;
-			gameTurn += 1;
+			return // board is full game was a tie
+		
+		} else {
+			nextTurn();
 		}
+	}
+
+	function nextTurn() {
+		gameTurn += 1;
+		showCurrentPlayer();
+	}
+
+
+	// HTML Game information
+	function updateDisplay(playerWhoClicked){
+		this.innerHTML = playerWhoClicked.symbol;
+	}
+
+	function toggleHiddenClass(element) {
+		element.classList.toggle('hidden');
+	}
+
+	function showCurrentPlayer () {
+		thePlayer = currentPlayer();
+		currentPlayerDisplay.innerHTML = `${thePlayer.name}'s Turn!`;
+
+		onePlayerGame ? checkIfComputerTurn() : null; 
+	}
+
+	function showGameScore () {
+		playerOneScoreDisplay.innerHTML = `${playerOne.name} (${playerOne.symbol}): ${playerOneScore}`
+		playerTwoScoreDisplay.innerHTML = `${playerTwo.name} (${playerTwo.symbol}): ${playerTwoScore}`
 	}
 
 	function reset() {
+		gameOver = false;
+
 		// reset the game array
-		for (i = 0; i < 9; i ++) {
+		for (let i = 0; i < 9; i++) {
 			gameBoard[i] = '';
 		}
-		
-		// clear the HTML
-		gameSpots.forEach(spot => spot.innerHTML = '');
-		winnerMessageHTML.innerHTML = ``;
-		playAgainButton.classList.toggle('hidden');
+
+			// clear the HTML game board
+			gameSpots.forEach(spot => spot.innerHTML = '');
+			gameOverMessageHTML.innerHTML = ``;
+			toggleHiddenClass(playAgainButton);
+			toggleHiddenClass(currentPlayerDisplay);
+
+			nextTurn();
+		}
+
+	// Start Game 
+	function setPlayers (first, second) {
+		playerOne = first;
+		playerTwo = second;
+
+		playerOne.computer ? onePlayerGame = true : null; // checks if a player is computer
+
+		startGame();
 	}
 
-	return { gameBoard, playerClick, setPlayers, reset };
+	function startGame () {
+		// hide buttons & show game
+		toggleHiddenClass(onePlayerGameButton);
+		toggleHiddenClass(twoPlayerGameButton);
+		toggleHiddenClass(displayBoard);
+		toggleHiddenClass(currentPlayerDisplay);
+
+		showGameScore();
+
+		showCurrentPlayer();
+	}
+
+	return { playerClick, setPlayers, reset };
 
 })();
 
 
 // factory function for players
-const createPlayer = (name, symbol) => {
+const createPlayer = (name, symbol, computer=false) => {
 	const getName = () => name 
 	const getSymbol = () => symbol
+	const isComputer = () => computer
 	
-	return { name, symbol };
+	return { name, symbol, computer };
 };
 
+function startOnePlayerGame (){
+	// computer AI
+	const playerOnePick = createPlayer('Hal-2000', 'X', true);// computer player
+	const playerTwoPick = createPlayer('Zeke', 'O');
 
-function toggleBoard () {
-	const displayBoard = document.querySelector('table');
-	const startButton = document.querySelector('#start_game');
+	// starts the game
+	game.setPlayers(playerOnePick, playerTwoPick);
+}
+
+function startTwoPlayerGame () {
+	// Default players
+	const playerOnePick = createPlayer('Margot', 'X');
+	const playerTwoPick = createPlayer('Zeke', 'O');
 	
-	displayBoard.classList.toggle('hidden');
-	startButton.classList.toggle('hidden');
-
+	// starts the game
 	game.setPlayers(playerOnePick, playerTwoPick);
 }
 
 // Event Listeners
-startGameButton.addEventListener('click', toggleBoard);
 playAgainButton.addEventListener('click', game.reset);
+onePlayerGameButton.addEventListener('click', startOnePlayerGame);
+twoPlayerGameButton.addEventListener('click', startTwoPlayerGame);
 
 gameSpots.forEach(spot => spot.addEventListener('click', game.playerClick));
 
-
-// Default players
-const playerOnePick = createPlayer('Margot', "X");
-const playerTwoPick = createPlayer('Zeke', 'O');

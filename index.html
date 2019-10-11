@@ -8,29 +8,37 @@
 <body>
 	<h1>Tic Tac Toe</h1>
 
-	<button type="button" id="start_game" class="">Play Tic Tac Toe!</button>
-
 	<h2 id="winner-message"></h2>
+
+	<button type="button" id="one_player_game_button" class="">Start One Player Game</button>
+	<button type="button" id="two_player_game_button" class="">Start Two Player Game</button>
 
 	<button type="button" id="play_again" class="hidden">Play Again?</button>
 
+	<h2 id="current_player" class="hidden"></h2>
+
 	<table class="hidden">
 		<tr>
+			<td data-spot='0' class="board-spot"></td>
 			<td data-spot='1' class="board-spot"></td>
 			<td data-spot='2' class="board-spot"></td>
-			<td data-spot='3' class="board-spot"></td>
 		</tr>
 		<tr>
+			<td data-spot='3' class="board-spot"></td>
 			<td data-spot='4' class="board-spot"></td>
 			<td data-spot='5' class="board-spot"></td>
-			<td data-spot='6' class="board-spot"></td>
 		</tr>
 		<tr>
+			<td data-spot='6' class="board-spot"></td>
 			<td data-spot='7' class="board-spot"></td>
 			<td data-spot='8' class="board-spot"></td>
-			<td data-spot='9' class="board-spot"></td>
 		</tr>
 	</table>
+
+	<h3 id="player_one_score"></h3>
+	<h3 id="player_two_score"></h3>
+
+
 
 	<footer>
 		<p class="footer" >Created by <a href="https://github.com/a6macleod/js_tictactoe" target="_blank" class="name">Andrew MacLeod</a></p>
