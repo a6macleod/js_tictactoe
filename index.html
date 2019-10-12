@@ -10,34 +10,37 @@
 
 	<h2 id="winner-message"></h2>
 
-	<button type="button" id="one_player_game_button" class="">Start One Player Game</button>
-	<button type="button" id="two_player_game_button" class="">Start Two Player Game</button>
+	<button type="button" id="one_player_game_button" class="player_button button">Start One Player Game</button>
+	<button type="button" id="two_player_game_button" class="player_button button">Start Two Player Game</button>
 
-	<button type="button" id="play_again" class="hidden">Play Again?</button>
+	<button type="button" id="play_again" class="hidden button">Play Again?</button>
 
 	<h2 id="current_player" class="hidden"></h2>
 
-	<table class="hidden">
-		<tr>
-			<td data-spot='0' class="board-spot"></td>
-			<td data-spot='1' class="board-spot"></td>
-			<td data-spot='2' class="board-spot"></td>
-		</tr>
-		<tr>
-			<td data-spot='3' class="board-spot"></td>
-			<td data-spot='4' class="board-spot"></td>
-			<td data-spot='5' class="board-spot"></td>
-		</tr>
-		<tr>
-			<td data-spot='6' class="board-spot"></td>
-			<td data-spot='7' class="board-spot"></td>
-			<td data-spot='8' class="board-spot"></td>
-		</tr>
-	</table>
+	<div class="table_container">
+		<table class="hidden">
+			<tr>
+				<td data-spot='0' class="board-spot"></td>
+				<td data-spot='1' class="board-spot"></td>
+				<td data-spot='2' class="board-spot"></td>
+			</tr>
+			<tr>
+				<td data-spot='3' class="board-spot"></td>
+				<td data-spot='4' class="board-spot"></td>
+				<td data-spot='5' class="board-spot"></td>
+			</tr>
+			<tr>
+				<td data-spot='6' class="board-spot"></td>
+				<td data-spot='7' class="board-spot"></td>
+				<td data-spot='8' class="board-spot"></td>
+			</tr>
+		</table>
+	</div>
 
-	<h3 id="player_one_score"></h3>
-	<h3 id="player_two_score"></h3>
-
+	<div class="game_score">
+		<h3 id="player_one_score"></h3>
+		<h3 id="player_two_score"></h3>
+	</div>
 
 
 	<footer>

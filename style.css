@@ -2,9 +2,45 @@
 	display: none;
 }
 
+body {
+	text-align: center;
+	background-color: #e6e6e6;
+}
+
+h1, h2, h3, p {
+	color: #AE59B6;
+}
+
+table {
+	margin-left:auto; 
+	margin-right:auto;
+}
+
 td {
 	border: 1px solid black;
 	width: 50px;
 	height: 50px;
 	text-align: center;
-}	
+	background-color: white;
+}
+.button {
+	border-radius: 10px;
+	padding: 1em;
+	background-color: #AE59B6;
+	color: #e6e6e6;
+}
+.player_button { margin: 5em 2em; }
+
+#play_again, .game_score { margin-bottom: 2em; }
+
+.button:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+}
+
+footer { 
+	position: absolute; 
+	bottom: 0; 
+	width: 100%;
+	margin-bottom: 1.25em;
+}
