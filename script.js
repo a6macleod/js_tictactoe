@@ -35,7 +35,7 @@ const game = (() => {
 		const arraySpot = generateComputerNumber();
 
 		if (isBoardFull()) {
-			return;
+			tieGameMessage();
 		} else if (checkPlaySpot(arraySpot)) {
 			const gameBoardDisplay = document.querySelector(
 				`td[data-spot="${arraySpot}"]`
@@ -49,17 +49,16 @@ const game = (() => {
 
 	function generateComputerNumber() {
 		let computerChoice = Math.floor(Math.random() * 9);
-		console.log(computerChoice);
 		return computerChoice;
 	}
 
 	// is game a tie
 	function isBoardFull() {
 		if (!gameBoard.includes("")) {
-			console.log(`!gameBoard.includes('')${!gameBoard.includes("")}`);
-			gameOver = true;
-			tieGameMessage();
-		}
+			return true;
+		} else {
+      return false;
+    }
 	}
 
 	// Winner logic
@@ -171,7 +170,8 @@ const game = (() => {
 		if (checkWinner()) {
 			winnerMessage(playerWhoClicked);
 		} else if (isBoardFull()) {
-			return; // board is full game was a tie
+			tieGameMessage()
+      //return; // board is full game was a tie
 		} else {
 			nextTurn();
 		}
